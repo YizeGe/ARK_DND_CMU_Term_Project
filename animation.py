@@ -1,3 +1,6 @@
+from combat import resolveAttack, updateTurn
+from cmu_graphics import *
+
 def updateIdleAnimation(unit):
     idleLen=len(unit.frames['idle'])
     if idleLen==0:
@@ -15,14 +18,42 @@ def updateMoveAnimation(unit):
         unit.frameIndex=(unit.frameIndex+1)%moveLen
 
 def updateAttackAnimation(unit):
-    attackLen=unit.frames[unit.state]
+    attackLen=len(unit.frames['attack'])
     if unit.frameIndex>=attackLen-1:
+        unit.frameIndex=0
         return True
     unit.frameIndex+=1
     return False
 
-def updateMotion(unit):
+def updateSkillAnimation(unit):
+    skillLen=len(unit.frames['skill'])
+    if unit.frameIndex>=skillLen-1:
+        unit.frameIndex=0
+        return True
+    unit.frameIndex+=1
+    return False
+
+def updateAnimation(app,unit):
+    isAttack,isSkill=False,False
     if unit.isDied():
+        if unit.state!='die':
+            unit.frameIndex=0
+            unit.updateMotion('die')
         updateDieAnimation(unit)
     elif unit.isMoving():
         updateMoveAnimation(unit)
+        unit.moveCharacter()
+        unit.ap-=2
+    if unit.state=='idle':
+        updateIdleAnimation(unit)
+    if unit.state=='attack':
+        isAttack=updateAttackAnimation(unit)
+    if unit.state=='skill':
+        isSkill=updateSkillAnimation(unit)
+    if isAttack or isSkill:
+        resolveAttack(app,unit)
+        unit.updateMotion('idle')
+        if unit.team=='enemy':
+            updateTurn(app,unit)
+
+    

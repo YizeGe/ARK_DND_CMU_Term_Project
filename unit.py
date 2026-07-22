@@ -13,8 +13,8 @@ class Unit:
         self.occupation=occupation
         self.x=x
         self.y=y
-        self.moveTargetX=None
-        self.moveTargetY=None
+        self.moveTargetX=x
+        self.moveTargetY=y
         self.atkRange=atkRange
         self.maxHp=level*constitution
         self.hp=level*constitution

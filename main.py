@@ -9,7 +9,7 @@ from Button import Button
 from unit import Unit
 from skill import Skill
 from assets import load_char_actions, importActionPic, ACTION_DIR
-from animation import updateAttackAnimation, updateDieAnimation, updateIdleAnimation, updateMoveAnimation
+from animation import updateAnimation
 
 
 def fitSkill(app,skill,unit):
@@ -109,7 +109,6 @@ def onMousePress(app,mouseX,mouseY):
                 app.selected_target = clicked_unit
                 curr_unit.act-=1
                 curr_unit.updateMotion('attack')
-                resolveAttack(app,curr_unit)
         else:
             curr_unit.startMove(mouseX,mouseY)
 
@@ -123,22 +122,20 @@ def drawAp(app):
     length=200
     x=app.endButton.posX
     y=app.endButton.posY-20
-    aplen=length-(unit.maxAp-unit.ap)
+    aplen=max(length-(unit.maxAp-unit.ap),1)
     drawRect(x,y,length,20,fill='gray')
     drawRect(x,y,aplen,20,fill='blue',border='black')
 
 def onStep(app):
     app.step_count+=1
     for unit in app.units:
-        if unit.isDied():
-            updateDieAnimation(unit)
-        if unit.isMoving():
-            updateMoveAnimation(unit)
-            unit.ap-=2
+        updateAnimation(app,unit)
     updateBattleStatus(app)
     if app.battleState is not None:
         return
     updateCharSeq(app)
+    if app.turn_index>=len(app.charActSeq):
+        app.turn_index=0
     updateTurnPhase(app)
     enemyAttack(app,app.charActSeq[app.turn_index])
 

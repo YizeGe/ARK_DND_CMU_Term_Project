@@ -21,7 +21,7 @@ def resolveAttack(app,attacker):
         app.selected_target=None
         return
     
-    damage=attacker.skills[0].attack(app.selected_target)
+    damage=5
     app.selected_target.hp-=damage
     
     print(app.selected_target,target.hp)
@@ -46,10 +46,12 @@ def updateBattleStatus(app):
     #敌人回合自动攻击（等待制作复杂敌人意图）
 def enemyAttack(app,unit):
     if unit.team=='enemy' and unit.state=='idle':
-        for u in app.units:
-            if u.alive and u.team=='hero':
-                app.selected_target=u
-        unit.updateMotion('attack')
+        if unit.act>0:
+            for u in app.units:
+                if u.alive and u.team=='hero':
+                    app.selected_target=u
+            unit.updateMotion('attack')
+            unit.act-=1
 
 
 def updateTurnPhase(app):
