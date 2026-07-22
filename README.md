@@ -2,13 +2,14 @@
 
 This project isn't done yet!
 
-Current version:1.0.1
+Current version:1.0.2
 
 Todo:
 
 ~~1.fix character cannot hit bug~~
 
 2.rewrite functions in main, seperate large funtions into small ones and put into different files
+(include ~~drawCharMotion~~, onMouseClick, onAppStart and (probably) redrawAll)
 
 3.add more characters and verify multiple character fighting logic
 
