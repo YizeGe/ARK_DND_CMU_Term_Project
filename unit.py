@@ -1,5 +1,6 @@
 from cmu_graphics import *
 import math
+import time
 
 class Unit:
     def __init__(self,app,name,team,occupation,
@@ -53,13 +54,39 @@ class Unit:
         self.moveTargetY = targetY
         self.updateMotion('move')
 
-    #更新角色动作
-    def updateMotion(self,motionState):
-        self.state=motionState
-        self.frameIndex=0
     
     def calculateBonus(self, feature):
         return math.floor((feature-10)/2)
     
     def __repr__(self):
          return f'<{self.team}, {self.name}>'
+    
+    #更新角色动作并播放
+    def updateMotion(self,state):
+        self.state=state
+        self.frameIndex=0
+
+
+    def isDied(self):
+        if self.hp<=0:
+            self.alive=False
+        return True
+    
+    def isMoving(self):
+        if self.moveTargetX!=self.x or self.moveTargetY!=self.y:
+            return True
+        return False
+    
+    def moveCharacter(self):
+        if not self.state=='move':
+            return
+        dx=self.moveTargetX-self.x
+        dy=self.moveTargetY-self.y
+        dist = (dx**2 + dy**2) ** 0.5
+        speed=8
+        if dist<speed:
+            self.x=self.moveTargetX
+            self.y=self.moveTargetY
+        else:
+            self.x+=speed*(dx/dist)
+            self.y+=speed*(dy/dist)

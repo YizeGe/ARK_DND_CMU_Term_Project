@@ -21,15 +21,12 @@ def resolveAttack(app,attacker):
         app.selected_target=None
         return
     
-    attacker.skills[0].attack(app.selected_target)
+    damage=attacker.skills[0].attack(app.selected_target)
+    app.selected_target.hp-=damage
     
     print(app.selected_target,target.hp)
 
     app.selected_target = None
-
-
-def reAttack(app,target):
-    skillName='regular_attack'
 
 
 #判断战斗是否结束
@@ -51,7 +48,7 @@ def enemyAttack(app,unit):
     if unit.team=='enemy' and unit.state=='idle':
         for u in app.units:
             if u.alive and u.team=='hero':
-                app.selected_target=u.name
+                app.selected_target=u
         unit.updateMotion('attack')
 
 

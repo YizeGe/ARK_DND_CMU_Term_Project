@@ -4,24 +4,28 @@ import Button
 
 class Skill:
     #初始化技能
-    def __init__(self,name,level,damage,time,button):
+    def __init__(self,name,level,damage,time,button,effect):
         self.name=name
         self.level=level
         self.damage=damage
         self.time=time
         self.button=button
+        self.effect=effect
 
-    def attack(self,target):
+    def isHit(self,ac):
         roll=self.rollDice()
-        if roll>target.ac:
-            if roll==20:
-                self.damage*2
-            return self.damage
+        if roll>ac:
+            return True
         else:
-            return None
+            return False
+
+    def returnEffect(self,attacker,target):
+        if self.isHit(target.ac):
+            if self.effect=='attack':
+                target.hp-=attacker.calculateBonus(attacker.strength)
 
     def rollDice(self):
-        return random.randint(19,20)
+        return random.randint(1,20)
     
     def drawButton(self,x,y,width,height):
         fill,text=self.button.color,self.button.text

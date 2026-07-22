@@ -8,28 +8,8 @@ from combat import resolveAttack, updateBattleStatus, updateCharSeq, updateTurnP
 from Button import Button
 from unit import Unit
 from skill import Skill
+from assets import load_char_actions, importActionPic, ACTION_DIR
 
-#主程序文件地址
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-#角色素材文件地址
-ACTION_DIR = os.path.join(BASE_DIR, 'action')
-
-#寻找角色动作文件地址并返回动作字典
-def load_char_actions(app, action_dir, char_folder, skin_folder, char_action, frame_counts):
-    actions = {}
-    for action_name, pic_count in frame_counts.items():
-        path = os.path.join(action_dir, char_folder, skin_folder, f"{char_action}_{action_name}")
-        actions[action_name] = importActionPic(app, pic_count, path)
-    return actions
-
-#返回角色动作列表
-def importActionPic(app,picNum,filePath):
-    action_list=[]
-    for i in range(picNum):
-        path=f'{filePath}/frame_{i:03d}.png'
-        action_list.append(CMUImage(Image.open(path)))
-    return action_list
 
 def fitSkill(app,skill,unit):
     skill.damage=random.randint(1,4+unit.level//2)+unit.calculateBonus(unit.strength)
@@ -57,7 +37,7 @@ def onAppStart(app):
     #posX,posY,width,height,text
     attackbutton=Button(None,None,None,None,'regular attack')
     #name,level,damage,time,button
-    regular_attack=Skill('regular attack','act',None,1,attackbutton,)
+    regular_attack=Skill('regular attack','act',None,1,attackbutton,'attack')
 
     #定义角色动作序列帧列表
 
@@ -145,44 +125,39 @@ def updateTurn(app,curr_unit):
 #重复播放角色动作图片，绘制角色
 def drawCharacterMotion(app,unit):
     if len(unit.frames)>0:
-            if not unit.alive and unit.state!='die':
-                unit.state='die'
-                unit.frameIndex=0
-            actList=unit.frames[unit.state]
-            if len(actList)>0:
-                if unit.state=='idle':
-                    unit.frameIndex=(unit.frameIndex+1)%len(actList)
-                elif unit.state=='die':
-                    if unit.frameIndex < len(actList) - 1:
-                        unit.frameIndex=(unit.frameIndex+1)
-                    else:
-                        unit.frameIndex=len(actList) - 1
-                elif unit.state=='move':
-                    dx = unit.moveTargetX - unit.x
-                    dy = unit.moveTargetY - unit.y
-                    dist = (dx**2 + dy**2) ** 0.5
-                    speed = 8  # 每帧移动的像素数,可以自己调
-                    if dist < speed:
-                        # 已经足够接近,直接落到目标点,结束移动
-                        unit.x = unit.moveTargetX
-                        unit.y = unit.moveTargetY
-                        unit.state = 'idle'
-                        unit.frameIndex = 0
-                    else:
-                        # 按方向比例移动一步
-                        unit.x += speed * dx / dist
-                        unit.y += speed * dy / dist
-                        # 同时推进move动作的帧,循环播放
-                        unit.frameIndex = (unit.frameIndex+1) % len(actList)
+        if unit.isDied() and unit.state!='die':
+            unit.updateMotion('die')
+
+        actList=unit.frames[unit.state]
+        if len(actList)>0:
+            if unit.state=='idle':
+                unit.frameIndex=(unit.frameIndex+1)%len(actList)
+            elif unit.state=='move':
+                dx = unit.moveTargetX - unit.x
+                dy = unit.moveTargetY - unit.y
+                dist = (dx**2 + dy**2) ** 0.5
+                speed = 8  # 每帧移动的像素数,可以自己调
+                if dist < speed:
+                    # 已经足够接近,直接落到目标点,结束移动
+                    unit.x = unit.moveTargetX
+                    unit.y = unit.moveTargetY
+                    unit.state = 'idle'
+                    unit.frameIndex = 0
                 else:
-                    if unit.frameIndex >= len(actList) - 1:
-                        resolveAttack(app,unit)
-                        unit.state = 'idle'
-                        unit.frameIndex = 0
-                        if unit.team=='enemy':
-                            updateTurn(app,unit)
-                    else:
-                        unit.frameIndex += 1
+                    # 按方向比例移动一步
+                    unit.x += speed * dx / dist
+                    unit.y += speed * dy / dist
+                    # 同时推进move动作的帧,循环播放
+                    unit.frameIndex = (unit.frameIndex+1) % len(actList)
+            else:
+                if unit.frameIndex >= len(actList) - 1:
+                    resolveAttack(app,unit)
+                    unit.state = 'idle'
+                    unit.frameIndex = 0
+                    if unit.team=='enemy':
+                        updateTurn(app,unit)
+                else:
+                    unit.frameIndex += 1
 
 
 def drawAp(app):
