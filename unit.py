@@ -70,7 +70,7 @@ class Unit:
     def isDied(self):
         if self.hp<=0:
             self.alive=False
-        return True
+        return not self.alive
     
     def isMoving(self):
         if self.moveTargetX!=self.x or self.moveTargetY!=self.y:
@@ -87,6 +87,7 @@ class Unit:
         if dist<speed:
             self.x=self.moveTargetX
             self.y=self.moveTargetY
+            self.state='idle'
         else:
             self.x+=speed*(dx/dist)
             self.y+=speed*(dy/dist)

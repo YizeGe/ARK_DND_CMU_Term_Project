@@ -57,3 +57,10 @@ def updateTurnPhase(app):
         app.turn_phase='waiting_for_target'
     else:
         app.turn_phase='enemy_acting'
+
+def updateTurn(app,curr_unit):
+    app.turn_index+=1
+    if app.turn_index>=len(app.charActSeq):
+        app.turn_index=0
+    curr_unit.ap=curr_unit.maxAp
+    curr_unit.act=curr_unit.maxAct

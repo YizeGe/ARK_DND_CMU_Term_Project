@@ -4,11 +4,12 @@ import os
 import random
 import time
 
-from combat import resolveAttack, updateBattleStatus, updateCharSeq, updateTurnPhase, enemyAttack
+from combat import resolveAttack, updateBattleStatus, updateCharSeq, updateTurnPhase, enemyAttack, updateTurn
 from Button import Button
 from unit import Unit
 from skill import Skill
 from assets import load_char_actions, importActionPic, ACTION_DIR
+from animation import updateAttackAnimation, updateDieAnimation, updateIdleAnimation, updateMoveAnimation
 
 
 def fitSkill(app,skill,unit):
@@ -115,49 +116,6 @@ def onMousePress(app,mouseX,mouseY):
 def onMouseMove(app,mouseX,mouseY):
     app.endButton.mouseOnButton(mouseX,mouseY)
 
-def updateTurn(app,curr_unit):
-    app.turn_index+=1
-    if app.turn_index>=len(app.charActSeq):
-        app.turn_index=0
-    curr_unit.ap=curr_unit.maxAp
-    curr_unit.act=curr_unit.maxAct
-
-#重复播放角色动作图片，绘制角色
-def drawCharacterMotion(app,unit):
-    if len(unit.frames)>0:
-        if unit.isDied() and unit.state!='die':
-            unit.updateMotion('die')
-
-        actList=unit.frames[unit.state]
-        if len(actList)>0:
-            if unit.state=='idle':
-                unit.frameIndex=(unit.frameIndex+1)%len(actList)
-            elif unit.state=='move':
-                dx = unit.moveTargetX - unit.x
-                dy = unit.moveTargetY - unit.y
-                dist = (dx**2 + dy**2) ** 0.5
-                speed = 8  # 每帧移动的像素数,可以自己调
-                if dist < speed:
-                    # 已经足够接近,直接落到目标点,结束移动
-                    unit.x = unit.moveTargetX
-                    unit.y = unit.moveTargetY
-                    unit.state = 'idle'
-                    unit.frameIndex = 0
-                else:
-                    # 按方向比例移动一步
-                    unit.x += speed * dx / dist
-                    unit.y += speed * dy / dist
-                    # 同时推进move动作的帧,循环播放
-                    unit.frameIndex = (unit.frameIndex+1) % len(actList)
-            else:
-                if unit.frameIndex >= len(actList) - 1:
-                    resolveAttack(app,unit)
-                    unit.state = 'idle'
-                    unit.frameIndex = 0
-                    if unit.team=='enemy':
-                        updateTurn(app,unit)
-                else:
-                    unit.frameIndex += 1
 
 
 def drawAp(app):
@@ -172,8 +130,10 @@ def drawAp(app):
 def onStep(app):
     app.step_count+=1
     for unit in app.units:
-        drawCharacterMotion(app,unit)
-        if unit.state=='move':
+        if unit.isDied():
+            updateDieAnimation(unit)
+        if unit.isMoving():
+            updateMoveAnimation(unit)
             unit.ap-=2
     updateBattleStatus(app)
     if app.battleState is not None:
