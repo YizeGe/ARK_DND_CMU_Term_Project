@@ -1,4 +1,4 @@
-from combat import resolveAttack, updateTurn
+from combat import *
 from cmu_graphics import *
 
 def updateIdleAnimation(unit):
@@ -35,21 +35,27 @@ def updateSkillAnimation(unit):
 
 def updateAnimation(app,unit):
     isAttack,isSkill=False,False
+    #如果死了
     if unit.isDied():
         if unit.state!='die':
             unit.frameIndex=0
             unit.updateMotion('die')
         updateDieAnimation(unit)
+    #如果在动
     elif unit.isMoving():
         updateMoveAnimation(unit)
         unit.moveCharacter()
         unit.ap-=2
+    #如果什么都不干
     if unit.state=='idle':
         updateIdleAnimation(unit)
+    #如果在攻击
     if unit.state=='attack':
         isAttack=updateAttackAnimation(unit)
+    #如果在放技能
     if unit.state=='skill':
         isSkill=updateSkillAnimation(unit)
+    #如果攻击或者技能结束
     if isAttack or isSkill:
         resolveAttack(app,unit)
         unit.updateMotion('idle')

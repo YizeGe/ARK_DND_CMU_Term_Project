@@ -76,13 +76,19 @@ class Unit:
         if self.moveTargetX!=self.x or self.moveTargetY!=self.y:
             return True
         return False
+
+    def getDistance(self,x,y):
+        dx=x-self.x
+        dy=y-self.y
+        dist = (dx**2 + dy**2) ** 0.5
+        return dist
     
     def moveCharacter(self):
         if not self.state=='move':
             return
         dx=self.moveTargetX-self.x
         dy=self.moveTargetY-self.y
-        dist = (dx**2 + dy**2) ** 0.5
+        dist=self.getDistance(self.moveTargetX,self.moveTargetY)
         speed=8
         if dist<speed:
             self.x=self.moveTargetX

@@ -4,12 +4,12 @@ import os
 import random
 import time
 
-from combat import resolveAttack, updateBattleStatus, updateCharSeq, updateTurnPhase, enemyAttack, updateTurn
-from Button import Button
+from combat import *
 from unit import Unit
 from skill import Skill
 from assets import load_char_actions, importActionPic, ACTION_DIR
 from animation import updateAnimation
+from button import Button
 
 
 def fitSkill(app,skill,unit):
@@ -37,8 +37,8 @@ def onAppStart(app):
     #定义技能和按钮
     #posX,posY,width,height,text
     attackbutton=Button(None,None,None,None,'regular attack')
-    #name,level,damage,time,button
-    regular_attack=Skill('regular attack','act',None,1,attackbutton,'attack')
+    #name,button,effect,diceCount,diceSides,fixedDamage,hitBonus,isRanged,range
+    regular_attack=Skill('regular attack',attackbutton,'damage',1,6,6,2,False,200)
 
     #定义角色动作序列帧列表
 
@@ -84,33 +84,18 @@ def onAppStart(app):
 
 #轮到我方角色时，选择一名角色对其使用攻击（现在只有攻击）
 def onMousePress(app,mouseX,mouseY):
-    if app.battleState is None:
-        if app.turn_phase != 'waiting_for_target':
-            return
-        curr_unit=app.charActSeq[app.turn_index]
-        if curr_unit.state!='idle':
-            return
-        
-        if app.endButton.clickOnButton(mouseX,mouseY):
-            updateTurn(app,curr_unit)
-            return
-
-        clicked_unit=None
-        for unit in app.units:
-            if unit.alive and unit.clickOnCharacter(mouseX,mouseY):
-                clicked_unit=unit
-                break
-        if clicked_unit is not None:
-            dx = clicked_unit.x - curr_unit.x
-            dy = clicked_unit.y - curr_unit.y
-            dist = (dx**2 + dy**2) ** 0.5
-            print(dist)
-            if dist <= curr_unit.atkRange and curr_unit.act > 0:
-                app.selected_target = clicked_unit
-                curr_unit.act-=1
-                curr_unit.updateMotion('attack')
-        else:
-            curr_unit.startMove(mouseX,mouseY)
+    curr_unit=canPlayerAct(app)
+    if curr_unit is None:
+        return
+    if app.endButton.clickOnButton(mouseX,mouseY):
+        updateTurn(app,curr_unit)
+        return
+    clicked_unit=findClickedCharacter(app,mouseX,mouseY)
+    if not clicked_unit is None:
+        tryAttackUnit(app,curr_unit,clicked_unit)
+    else:
+        curr_unit.startMove(mouseX,mouseY)
+    
 
 def onMouseMove(app,mouseX,mouseY):
     app.endButton.mouseOnButton(mouseX,mouseY)
