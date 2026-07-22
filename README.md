@@ -6,7 +6,7 @@ Current version:1.0.0
 
 Todo:
 
-~~1.fix character cannot hit bugS~~
+~~1.fix character cannot hit bug~~
 
 2.rewrite functions in main, seperate large funtions into small ones and put into different files
 
