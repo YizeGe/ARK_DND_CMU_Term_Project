@@ -1,33 +1,38 @@
 from cmu_graphics import *
 import random
-import Button
 
 class Skill:
     #初始化技能
-    def __init__(self,name,level,damage,time,button,effect):
+    def __init__(self,name,button,effect,diceCount,diceSides,fixedDamage,hitBonus,isRanged,range):
         self.name=name
-        self.level=level
-        self.damage=damage
-        self.time=time
         self.button=button
         self.effect=effect
+        self.hitBonus=hitBonus
+        self.diceCount=diceCount
+        self.diceSides=diceSides
+        self.fixedDamage=fixedDamage
+        self.isRanged=isRanged
+        self.range=range
 
     def isHit(self,ac):
-        roll=self.rollDice()
-        if roll>ac:
+        roll=self.rollDice()+self.hitBonus
+        if roll>=ac:
             return True
         else:
             return False
 
-    def returnEffect(self,attacker,target):
-        if self.isHit(target.ac):
-            if self.effect=='attack':
-                target.hp-=attacker.calculateBonus(attacker.strength)
+    def calDamage(self,attacker):
+        sumDamage=0
+        for _ in range(self.diceCount):
+            sumDamage+=self.rollDamage()
+        sumDamage+=self.fixedDamage
+        sumDamage+=attacker.calculateBonus(attacker.strength)
+        return sumDamage
+
+    def rollDamage(self):
+        return random.randint(1,self.diceSides)
 
     def rollDice(self):
         return random.randint(1,20)
+
     
-    def drawButton(self,x,y,width,height):
-        fill,text=self.button.color,self.button.text
-        drawRect(x,y,width,height,fill=fill,border='black')
-        drawLabel(text,x+width/2,y+height/2,fill='black',size=width//10)
