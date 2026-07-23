@@ -101,6 +101,7 @@ def tryAttackUnit(app,attacker,target):
     app.selected_target=target
     attacker.act-=1
     attacker.updateMotion('attack')
+    setAttackFacing(attacker,target)
 
 def resolveAttack(app,attacker):
     if app.selected_target is None:
@@ -108,7 +109,6 @@ def resolveAttack(app,attacker):
     if app.selected_target.isDied():
         return
     skill=attacker.skills[0]
-    setAttackFacing(attacker,app.selected_target)
     if skill.isHit(app.selected_target.ac):
         damage=skill.calDamage(attacker)
         app.selected_target.hp-=damage
