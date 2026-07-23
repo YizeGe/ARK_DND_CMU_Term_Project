@@ -5,8 +5,6 @@ import random
 import time
 
 from combat import *
-from unit import Unit
-from skill import Skill
 from assets import load_char_actions, importActionPic, ACTION_DIR
 from animation import updateAnimation
 from button import Button
@@ -32,17 +30,9 @@ def onAppStart(app):
     app.selected_target=None
 
     #创建角色
-
-                    #app,name,team,occupation,x,y,atkRange,act,level
-                    #力量，    敏捷，      智力，        感知，     体质，        魅力
-                    #,strength,dexterity,intellegence,perception,constitution,charisma,
-                    #action,skills):
-
     app.units.append(createHero('水月'))
     app.units.append(createHero('德克萨斯'))
     app.units.append(createEnemy('sog','雪犬A',600,600))
-    # app.units.append(create_unit("地精A", "enemy",'游荡者', 600, 150, 6, 12, 1, 2))
-    # app.units.append(create_unit("地精B", "enemy",'游荡者',720, 220, 6, 12, 1, 2))
 
     #角色序列帧索引定位
     app.step_count=0
