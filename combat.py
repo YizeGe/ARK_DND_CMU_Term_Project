@@ -114,3 +114,4 @@ def resolveAttack(app,attacker):
             print(f'{app.selected_target.name} is died!')
     else:
         print('miss!')
+    app.selected_target=None

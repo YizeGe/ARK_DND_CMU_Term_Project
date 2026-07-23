@@ -26,7 +26,10 @@ class Skill:
         for _ in range(self.diceCount):
             sumDamage+=self.rollDamage()
         sumDamage+=self.fixedDamage
-        sumDamage+=attacker.calculateBonus(attacker.strength)
+        if self.isRanged:
+            sumDamage+=attacker.calculateBonus(attacker.dexterity)
+        else:
+            sumDamage+=attacker.calculateBonus(attacker.strength)
         return sumDamage
 
     def rollDamage(self):
