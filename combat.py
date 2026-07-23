@@ -54,6 +54,9 @@ def enemyAttack(app,enemy):
             setAttackFacing(enemy,app.selected_target)
             if dist>enemy.skills[0].range:
                 enemyApproach(app,enemy,app.selected_target)
+                if enemy.ap<=1:
+                    updateTurn(app,enemy)
+                    return
             else:
                 enemy.updateMotion('attack')
                 enemy.act-=1
