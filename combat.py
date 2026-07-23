@@ -21,16 +21,41 @@ def updateBattleStatus(app):
     else:
         app.battleState=None
 
+#敌人攻击目标设置为距离最近的hero
+def enemyFindTarget(app,enemy):
+    smallestDist=app.width*app.height
+    target=None
+    for unit in app.units:
+        if unit.team=='hero' and unit.alive:
+            dist=enemy.getDistance(unit.x,unit.y)
+            if smallestDist>=dist:
+                smallestDist=dist
+                target=unit
+    return target
+    
+#敌人自动往目标角色方向移动
+def enemyApproach(app,enemy,target):
+    if enemy.getDistance(target.x,target.y)>enemy.skills[0].range:
+        dx=target.x-enemy.x
+        dy=target.y-enemy.y
+        dist=enemy.getDistance(target.x,target.y)
+        percentage=(dist-150)/dist
+        x=dx*percentage+enemy.x
+        y=dy*percentage+enemy.y
+        enemy.startMove(x,y)
+
 
 #敌人回合自动攻击（等待制作复杂敌人意图）
-def enemyAttack(app,unit):
-    if unit.team=='enemy' and unit.state=='idle':
-        if unit.act>0:
-            for u in app.units:
-                if u.alive and u.team=='hero':
-                    app.selected_target=u
-            unit.updateMotion('attack')
-            unit.act-=1
+def enemyAttack(app,enemy):
+    if enemy.team=='enemy' and enemy.state=='idle':
+        if enemy.act>0:
+            app.selected_target=enemyFindTarget(app,enemy)
+            dist=enemy.getDistance(app.selected_target.x,app.selected_target.y)
+            if dist>enemy.skills[0].range:
+                enemyApproach(app,enemy,app.selected_target)
+            else:
+                enemy.updateMotion('attack')
+                enemy.act-=1
 
 #更新当前游戏角色对应状态
 def updateTurnPhase(app):
@@ -68,7 +93,7 @@ def findClickedCharacter(app,mouseX,mouseY):
 #尝试进行攻击并更新角色资源
 def tryAttackUnit(app,attacker,target):
     dist=attacker.getDistance(target.x,target.y)
-    if dist>attacker.atkRange:
+    if dist>attacker.skills[0].range:
         return
     if attacker.act<=0:
         return

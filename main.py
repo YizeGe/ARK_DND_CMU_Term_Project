@@ -11,10 +11,6 @@ from assets import load_char_actions, importActionPic, ACTION_DIR
 from animation import updateAnimation
 from button import Button
 
-
-def fitSkill(app,skill,unit):
-    skill.damage=random.randint(1,4+unit.level//2)+unit.calculateBonus(unit.strength)
-
 def onAppStart(app):
     #游戏状态
     app.units=[]
@@ -75,11 +71,6 @@ def onAppStart(app):
     #创建结束回合按钮
     app.endButton=Button(app.width-200,app.height-50,200,50,'End Round')
 
-    #初始化每个角色的攻击伤害
-    for unit in app.units:
-        skills=unit.skills
-        for skill in skills:
-            fitSkill(app,skill,unit)
 
 
 #轮到我方角色时，选择一名角色对其使用攻击（现在只有攻击）
