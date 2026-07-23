@@ -95,10 +95,15 @@ class Unit:
             self.facing='right'
         elif dx<0:
             self.facing='left'
-        if dist<speed:
-            self.x=self.moveTargetX
-            self.y=self.moveTargetY
-            self.state='idle'
+        if self.ap>1:
+            if dist<speed:
+                self.x=self.moveTargetX
+                self.y=self.moveTargetY
+                self.state='idle'
+            else:
+                self.x+=speed*(dx/dist)
+                self.y+=speed*(dy/dist)
         else:
-            self.x+=speed*(dx/dist)
-            self.y+=speed*(dy/dist)
+            self.moveTargetX=self.x
+            self.moveTargetY=self.y
+            self.updateMotion('idle')

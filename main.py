@@ -98,7 +98,7 @@ def drawAp(app):
     length=200
     x=app.endButton.posX
     y=app.endButton.posY-20
-    aplen=max(length-(unit.maxAp-unit.ap),1)
+    aplen=max(length*unit.ap/unit.maxAp,1)
     drawRect(x,y,length,20,fill='gray')
     drawRect(x,y,aplen,20,fill='blue',border='black')
 
