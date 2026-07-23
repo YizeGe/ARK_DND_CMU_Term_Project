@@ -37,6 +37,7 @@ class Unit:
         self.frameIndex=0
         self.clickRadius=app.charHeight
         self.skills=skills
+        self.facing='right'
 
     #检查角色是否被点击
     def clickOnCharacter(self,mouseX,mouseY):
@@ -90,6 +91,10 @@ class Unit:
         dy=self.moveTargetY-self.y
         dist=self.getDistance(self.moveTargetX,self.moveTargetY)
         speed=8
+        if dx>0:
+            self.facing='right'
+        elif dx<0:
+            self.facing='left'
         if dist<speed:
             self.x=self.moveTargetX
             self.y=self.moveTargetY

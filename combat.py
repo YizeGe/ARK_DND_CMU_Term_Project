@@ -51,6 +51,7 @@ def enemyAttack(app,enemy):
         if enemy.act>0:
             app.selected_target=enemyFindTarget(app,enemy)
             dist=enemy.getDistance(app.selected_target.x,app.selected_target.y)
+            setAttackFacing(enemy,app.selected_target)
             if dist>enemy.skills[0].range:
                 enemyApproach(app,enemy,app.selected_target)
             else:
@@ -107,6 +108,7 @@ def resolveAttack(app,attacker):
     if app.selected_target.isDied():
         return
     skill=attacker.skills[0]
+    setAttackFacing(attacker,app.selected_target)
     if skill.isHit(app.selected_target.ac):
         damage=skill.calDamage(attacker)
         app.selected_target.hp-=damage
@@ -115,3 +117,10 @@ def resolveAttack(app,attacker):
     else:
         print('miss!')
     app.selected_target=None
+
+
+def setAttackFacing(unit,target):
+    if unit.x<target.x:
+        unit.facing='right'
+    else:
+        unit.facing='left'

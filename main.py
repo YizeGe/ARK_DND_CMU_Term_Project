@@ -1,5 +1,5 @@
 from cmu_graphics import *
-from PIL import Image
+from PIL import Image as PILImage
 import os
 import random
 import time
@@ -127,6 +127,8 @@ def redrawAll(app):
             actList=unit.frames[unit.state]
             if len(actList)>0:
                 curr_pic=actList[unit.frameIndex]
+                if unit.facing=='left':
+                    curr_pic=CMUImage(curr_pic.image.transpose(PILImage.FLIP_LEFT_RIGHT))
                 drawImage(curr_pic,unit.x,unit.y,align='center',width=app.charWidth,height=app.charHeight)
                 drawRect(unit.x-app.charWidth//2+50,unit.y+app.charHeight//2-50,app.charWidth//2,15,fill='gray')
                 drawRect(unit.x-app.charWidth//2+50,unit.y+app.charHeight//2-50,hpBarWidth(app,unit),15,fill=unit.color)
