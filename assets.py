@@ -10,10 +10,14 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ACTION_DIR = os.path.join(BASE_DIR, 'action')
 
 #寻找角色动作文件地址并返回动作字典
-def load_char_actions(app, action_dir, char_folder, skin_folder, char_action, frame_counts):
+def load_char_actions(app,animationInfo):
     actions = {}
+    frame_counts=animationInfo['frame_counts']
+    char_folder=animationInfo['char_folder']
+    skin_folder=animationInfo['skin_folder']
+    char_prefix=animationInfo['char_prefix']
     for action_name, pic_count in frame_counts.items():
-        path = os.path.join(action_dir, char_folder, skin_folder, f"{char_action}_{action_name}")
+        path = os.path.join(ACTION_DIR, char_folder, skin_folder, f"{char_prefix}_{action_name}")
         actions[action_name] = importActionPic(app, pic_count, path)
     return actions
 

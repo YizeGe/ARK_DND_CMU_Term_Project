@@ -10,6 +10,7 @@ from skill import Skill
 from assets import load_char_actions, importActionPic, ACTION_DIR
 from animation import updateAnimation
 from button import Button
+from character import *
 
 def onAppStart(app):
     #游戏状态
@@ -30,35 +31,16 @@ def onAppStart(app):
     app.turn_phase=None
     app.selected_target=None
 
-    #定义技能和按钮
-    #posX,posY,width,height,text
-    attackbutton=Button(None,None,None,None,'regular attack')
-    #name,button,effect,diceCount,diceSides,fixedDamage,hitBonus,isRanged,range
-    regular_attack=Skill('regular attack',attackbutton,'damage',1,6,6,2,False,200)
-
-    #定义角色动作序列帧列表
-
-    mizuki_frame_counts = {"attack": 43, "skill": 40, "idle": 260, "die": 30, "move": 40}
-    mizuki_skills=[regular_attack]
-    mizuki_action = load_char_actions(app, ACTION_DIR, 'mizuki_animations', 'mizuki_game_skin', 'mizuki', mizuki_frame_counts)
-
-    texas_frame_counts = {"attack": 28, "skill": 28, "idle": 80, "die": 30, "move": 40}
-    texas_skills=[regular_attack]
-    texas_action = load_char_actions(app, ACTION_DIR, 'texas_animations', 'texas_time_skin', 'texas', texas_frame_counts)
-
-    sog_frame_counts = {"attack": 70, "move": 20, "idle": 30, "die": 30}
-    sog_skills=[regular_attack]
-    sog_action = load_char_actions(app, ACTION_DIR, 'sog_animations', 'sog_re_skin', 'sog', sog_frame_counts)
-
     #创建角色
 
                     #app,name,team,occupation,x,y,atkRange,act,level
                     #力量，    敏捷，      智力，        感知，     体质，        魅力
                     #,strength,dexterity,intellegence,perception,constitution,charisma,
                     #action,skills):
-    app.units.append(Unit(app,'水月','hero','战士',200,200,200,1,1,13,13,15,10,10,10,mizuki_action,mizuki_skills))
-    app.units.append(Unit(app,'德克萨斯','hero','游荡者',200,600,200,1,1,12,15,13,10,10,10,texas_action,texas_skills))
-    app.units.append(Unit(app,'雪犬A','enemy','游荡者',800,600,200,1,1,12,1,13,10,10,10,sog_action,sog_skills))
+
+    app.units.append(createHero('水月'))
+    app.units.append(createHero('德克萨斯'))
+    app.units.append(createEnemy('sog','雪犬A',600,600))
     # app.units.append(create_unit("地精A", "enemy",'游荡者', 600, 150, 6, 12, 1, 2))
     # app.units.append(create_unit("地精B", "enemy",'游荡者',720, 220, 6, 12, 1, 2))
 

@@ -1,6 +1,9 @@
 #这个文件会储存所有的角色和技能的具体数据，并包含角色和技能创建函数
+from cmu_graphics import *
 from skill import Skill
 from unit import Unit
+from button import Button
+from assets import *
 
 ALL_SKILL_DATA={
     'regular_attack':{
@@ -17,10 +20,9 @@ ALL_SKILL_DATA={
 }
 
 
-def createSkillFromData(skillName):
+def createSkillFromData(skillName,button):
     skillData=ALL_SKILL_DATA[skillName]
     name=skillData['name']
-    button=skillData['button']
     effect=skillData['effect']
     dice_count=skillData['dice_count']
     dice_sides=skillData['dice_sides']
@@ -48,7 +50,7 @@ HERO_DATA={
         "perception": 10,
         "constitution": 10,
         "charisma": 10,
-        "skill_names": ["regular attack"],
+        "skill_names": ["regular_attack"],
         "animation": {
             "char_folder": "mizuki_animations",
             "skin_folder": "mizuki_game_skin",
@@ -78,7 +80,7 @@ HERO_DATA={
         "perception": 10,
         "constitution": 10,
         "charisma": 10,
-        "skill_names": ["regular attack"],
+        "skill_names": ["regular_attack"],
         "animation": {
             "char_folder": "texas_animations",
             "skin_folder": "texas_time_skin",
@@ -108,7 +110,7 @@ ENEMY_DATA={
         "perception": 10,
         "constitution": 10,
         "charisma": 10,
-        "skill_names": ["regular attack"],
+        "skill_names": ["regular_attack"],
         "animation": {
             "char_folder": "sog_animations",
             "skin_folder": "sog_re_skin",
@@ -141,10 +143,13 @@ def createHero(heroName):
     charisma = heroData['charisma']
     skill_names = heroData['skill_names']
     animation = heroData['animation']
-    return Unit(name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, skill_names, animation)
+    skills=getSkillsList(skill_names)
+    actions=load_char_actions(app,animation)
+    return Unit(app,name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, actions, skills)
+
 
 def createEnemy(enemyName,name,x,y):
-    enemyData = HERO_DATA[enemyName]
+    enemyData = ENEMY_DATA[enemyName]
     team = enemyData['team']
     occupation = enemyData['occupation']
     atk_range = enemyData['atk_range']
@@ -158,4 +163,15 @@ def createEnemy(enemyName,name,x,y):
     charisma = enemyData['charisma']
     skill_names = enemyData['skill_names']
     animation = enemyData['animation']
-    return Unit(name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, skill_names, animation)
+    actions=load_char_actions(app,animation)
+    skills=getSkillsList(skill_names)
+    return Unit(app,name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, actions, skills)
+
+def getSkillsList(skill_names):
+    skills=[]
+    for name in skill_names:
+        button=Button(None,None,None,None,name)
+        skill=createSkillFromData(name,button)
+        skills.append(skill)
+    return skills
+
