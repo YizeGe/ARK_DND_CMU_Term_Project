@@ -49,9 +49,9 @@ class Skill:
             return False
         if self.costReaction and unit.reaction_used:
             return False
-        if self.costReaction==1 and unit.ring1<1:
+        if self.costRingSlot==1 and unit.ring1<1:
             return False
-        if self.costReaction==2 and unit.ring2<1:
+        if self.costRingSlot==2 and unit.ring2<1:
             return False
         return True
 

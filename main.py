@@ -34,6 +34,7 @@ def onAppStart(app):
     app.units.append(createHero(app,'水月'))
     app.units.append(createHero(app,'德克萨斯'))
     app.units.append(createEnemy(app,'sog','雪犬A',600,600))
+    app.units.append(createEnemy(app,'wizard','法师A',600,400))
 
     #角色序列帧索引定位
     app.step_count=0
@@ -84,11 +85,11 @@ def onStep(app):
             if unit.team=='enemy':
                 updateTurn(app,unit)
     updateBattleStatus(app)
-    if app.battleState in (game_state.BATTLE_LOSE,game_state.BATTLE_WIN):
-        return
     if app.turn_index>=len(app.charActSeq):
         app.turn_index=0
         updateCharSeq(app)
+    if app.battleState in (game_state.BATTLE_LOSE,game_state.BATTLE_WIN):
+        return
     updateTurnPhase(app)
     enemyAttack(app,app.charActSeq[app.turn_index])
 

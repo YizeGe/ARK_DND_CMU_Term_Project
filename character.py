@@ -20,7 +20,53 @@ ALL_SKILL_DATA={
         'cost_bonus':False,
         'cost_reaction':False,
         'cost_ring_slot':0
+    },
+    'fire_bolt':{
+        'name':'fire_bolt',
+        'button':None,
+        'effect':'damage',
+        'dice_count':1,
+        'dice_sides':10,
+        'fixed_damage':0,
+        'hit_bonus':2,
+        'is_ranged':True,
+        'range':1200,
+        'cost_action':True,
+        'cost_bonus':False,
+        'cost_reaction':False,
+        'cost_ring_slot':0
+    },
+    'magic_missile':{
+        'name':'magic_missile',
+        'button':None,
+        'effect':'damage',
+        'dice_count':3,
+        'dice_sides':4,
+        'fixed_damage':3,
+        'hit_bonus':999,
+        'is_ranged':True,
+        'range':1200,
+        'cost_action':True,
+        'cost_bonus':False,
+        'cost_reaction':False,
+        'cost_ring_slot':1
+    },
+    'cure_wound':{
+        'name':'cure_wound',
+        'button':None,
+        'effect':'heal',
+        'dice_count':1,
+        'dice_sides':8,
+        'fixed_damage':3,
+        'hit_bonus':999,
+        'is_ranged':False,
+        'range':200,
+        'cost_action':True,
+        'cost_bonus':False,
+        'cost_reaction':False,
+        'cost_ring_slot':1
     }
+
 }
 
 
@@ -130,7 +176,32 @@ ENEMY_DATA={
                 "die": 30
             }
         }
-    }
+    },
+    'wizard':{
+            "team": "enemy",
+            "occupation": "法师",
+            "atk_range": 200,
+            "act": 1,
+            "level": 1,
+            "strength": 10,
+            "dexterity": 12,
+            "intelligence": 15,
+            "perception": 14,
+            "constitution": 8,
+            "charisma": 12,
+            "skill_names": ["regular_attack"],
+            "animation": {
+                "char_folder": "wizard_animations",
+                "skin_folder": "wizard_default_skin",
+                "char_prefix": "wizard",
+                "frame_counts": {
+                    "attack": 36,
+                    "move": 30,
+                    "idle": 60,
+                    "die": 25
+                }
+            }
+        }
 }
 
 def createHero(app,heroName):
