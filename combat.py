@@ -70,7 +70,6 @@ def enemyAttack(app,enemy):
                     return
             else:
                 enemy.updateMotion('attack')
-                enemy.act-=1
 
 #更新当前游戏角色对应状态
 def updateTurnPhase(app):
