@@ -13,7 +13,9 @@ Todo:
 
 3.add more characters and verify multiple character fighting logic
 
-4.enhance game performance(improve enemy attack logic, add more skills and specify)
+3.1.Improve skill logic, add more skills and specify
+
+4.enhance game performance
 
 5.add main game loop and test playability
 
