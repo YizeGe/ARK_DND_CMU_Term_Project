@@ -31,9 +31,9 @@ def onAppStart(app):
     app.selected_target=None
 
     #创建角色
-    app.units.append(createHero('水月'))
-    app.units.append(createHero('德克萨斯'))
-    app.units.append(createEnemy('sog','雪犬A',600,600))
+    app.units.append(createHero(app,'水月'))
+    app.units.append(createHero(app,'德克萨斯'))
+    app.units.append(createEnemy(app,'sog','雪犬A',600,600))
 
     #角色序列帧索引定位
     app.step_count=0

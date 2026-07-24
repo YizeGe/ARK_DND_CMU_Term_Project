@@ -12,7 +12,7 @@ def updateCharSeq(app):
     app.charActSeq=sorted(app.charActSeq)[::-1]
     for i in range(len(app.charActSeq)):
         for unit in app.units:
-            if unit.initial==app.charActSeq[i]:
+            if unit.initial==app.charActSeq[i] and unit not in app.charActSeq:
                 app.charActSeq[i]=unit
     print(app.charActSeq)
 

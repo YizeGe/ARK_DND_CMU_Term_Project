@@ -125,7 +125,7 @@ ENEMY_DATA={
     }
 }
 
-def createHero(heroName):
+def createHero(app,heroName):
     heroData = HERO_DATA[heroName]
     name = heroData['name']
     team = heroData['team']
@@ -148,7 +148,7 @@ def createHero(heroName):
     return Unit(app,name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, actions, skills)
 
 
-def createEnemy(enemyName,name,x,y):
+def createEnemy(app,enemyName,name,x,y):
     enemyData = ENEMY_DATA[enemyName]
     team = enemyData['team']
     occupation = enemyData['occupation']
