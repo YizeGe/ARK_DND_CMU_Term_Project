@@ -1,12 +1,20 @@
 from cmu_graphics import *
+from game_state import game_state
+import copy
 import random
 
 def updateCharSeq(app):
     app.charActSeq=[]
     for unit in app.units:
         if unit.alive:
-            app.charActSeq.append(unit)
-
+            unit.initial=unit.rollInit()
+            app.charActSeq.append(unit.initial)
+    app.charActSeq=sorted(app.charActSeq)[::-1]
+    for i in range(len(app.charActSeq)):
+        for unit in app.units:
+            if unit.initial==app.charActSeq[i]:
+                app.charActSeq[i]=unit
+    print(app.charActSeq)
 
 #判断战斗是否结束
 def updateBattleStatus(app):
@@ -15,9 +23,9 @@ def updateBattleStatus(app):
         if unit.alive:
             charTeam.append(unit.team)
     if 'enemy' not in charTeam:
-        app.battleState='win'
+        app.battleState=game_state.BATTLE_WIN
     elif 'hero' not in charTeam:
-        app.battleState='lose'
+        app.battleState=game_state.BATTLE_LOSE
     else:
         app.battleState=None
 
@@ -49,6 +57,9 @@ def enemyApproach(app,enemy,target):
 def enemyAttack(app,enemy):
     if enemy.team=='enemy' and enemy.state=='idle':
         if enemy.act>0:
+            if app.selected_target is not None:
+                app.selected_target=None
+                return
             app.selected_target=enemyFindTarget(app,enemy)
             dist=enemy.getDistance(app.selected_target.x,app.selected_target.y)
             setAttackFacing(enemy,app.selected_target)
@@ -64,9 +75,9 @@ def enemyAttack(app,enemy):
 #更新当前游戏角色对应状态
 def updateTurnPhase(app):
     if app.charActSeq[app.turn_index].team=='hero':
-        app.turn_phase='waiting_for_target'
+        app.turn_phase=game_state.WAITING_FOR_TARGET
     else:
-        app.turn_phase='enemy_acting'
+        app.turn_phase=game_state.ENEMY_TURN
 
 #角色回合轮换
 def updateTurn(app,curr_unit):
@@ -76,11 +87,19 @@ def updateTurn(app,curr_unit):
     curr_unit.ap=curr_unit.maxAp
     curr_unit.act=curr_unit.maxAct
 
+#检查行动列表中是否有死人并剔除
+def checkDied(app):
+    for i in range(len(app.charActSeq)-1,-1,-1):
+        if app.charActSeq[i].isDied():
+            app.charActSeq.remove(app.charActSeq[i])
+            if i<app.turn_index:
+                app.turn_index-=1
+
 #判断当前角色是否能够进行攻击，并返回攻击目标
 def canPlayerAct(app):
-    if not app.battleState is None:
+    if app.battleState in (game_state.BATTLE_LOSE,game_state.BATTLE_WIN):
         return
-    if app.turn_phase!='waiting_for_target':
+    if app.turn_phase!=game_state.WAITING_FOR_TARGET:
         return
     unit=app.charActSeq[app.turn_index]
     if unit.state!='idle':

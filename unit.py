@@ -1,6 +1,6 @@
 from cmu_graphics import *
 import math
-import time
+import random
 
 class Unit:
     def __init__(self,app,name,team,occupation,
@@ -38,6 +38,7 @@ class Unit:
         self.clickRadius=app.charHeight
         self.skills=skills
         self.facing='right'
+        self.initial=None
 
     #检查角色是否被点击
     def clickOnCharacter(self,mouseX,mouseY):
@@ -107,3 +108,8 @@ class Unit:
             self.moveTargetX=self.x
             self.moveTargetY=self.y
             self.updateMotion('idle')
+
+    #获取先攻值
+    def rollInit(self):
+        initNum=random.randint(1,20)+self.calculateBonus(self.dexterity)
+        return initNum

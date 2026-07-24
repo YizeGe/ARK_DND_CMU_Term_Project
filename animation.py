@@ -1,4 +1,3 @@
-from combat import *
 from cmu_graphics import *
 
 def updateIdleAnimation(unit):
@@ -11,6 +10,8 @@ def updateDieAnimation(unit):
     dieLen=len(unit.frames['die'])
     if unit.frameIndex<dieLen-1:
         unit.frameIndex+=1
+        return False
+    return True
 
 def updateMoveAnimation(unit):
     moveLen=len(unit.frames['move'])
@@ -37,10 +38,14 @@ def updateAnimation(app,unit):
     isAttack,isSkill=False,False
     #如果死了
     if unit.isDied():
+        dieLen=len(unit.frames['die'])
         if unit.state!='die':
             unit.frameIndex=0
             unit.updateMotion('die')
-        updateDieAnimation(unit)
+        if unit.frameIndex>=dieLen-1:
+            return False
+        if updateDieAnimation(unit):
+            return True
     #如果在动
     elif unit.isMoving():
         updateMoveAnimation(unit)
@@ -57,9 +62,8 @@ def updateAnimation(app,unit):
         isSkill=updateSkillAnimation(unit)
     #如果攻击或者技能结束
     if isAttack or isSkill:
-        resolveAttack(app,unit)
-        unit.updateMotion('idle')
-        if unit.team=='enemy':
-            updateTurn(app,unit)
+        unit.state='idle'
+        return True
+    return False
 
     

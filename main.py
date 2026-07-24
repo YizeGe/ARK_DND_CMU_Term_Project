@@ -5,10 +5,11 @@ import random
 import time
 
 from combat import *
-from assets import load_char_actions, importActionPic, ACTION_DIR
 from animation import updateAnimation
 from button import Button
 from character import *
+from game_state import game_state
+
 
 def onAppStart(app):
     #游戏状态
@@ -76,14 +77,18 @@ def drawAp(app):
 
 def onStep(app):
     app.step_count+=1
+    checkDied(app)
     for unit in app.units:
-        updateAnimation(app,unit)
+        if updateAnimation(app,unit):
+            resolveAttack(app,unit)
+            if unit.team=='enemy':
+                updateTurn(app,unit)
     updateBattleStatus(app)
-    if app.battleState is not None:
+    if app.battleState in (game_state.BATTLE_LOSE,game_state.BATTLE_WIN):
         return
-    updateCharSeq(app)
     if app.turn_index>=len(app.charActSeq):
         app.turn_index=0
+        updateCharSeq(app)
     updateTurnPhase(app)
     enemyAttack(app,app.charActSeq[app.turn_index])
 
@@ -104,11 +109,11 @@ def redrawAll(app):
                 drawImage(curr_pic,unit.x,unit.y,align='center',width=app.charWidth,height=app.charHeight)
                 drawRect(unit.x-app.charWidth//2+50,unit.y+app.charHeight//2-50,app.charWidth//2,15,fill='gray')
                 drawRect(unit.x-app.charWidth//2+50,unit.y+app.charHeight//2-50,hpBarWidth(app,unit),15,fill=unit.color)
-                if unit is app.charActSeq[app.turn_index] and app.battleState is None:
+                if app.battleState not in (game_state.BATTLE_LOSE,game_state.BATTLE_WIN) and unit is app.charActSeq[app.turn_index]:
                     drawRect(unit.x-app.charWidth//2,unit.y-app.charHeight//2,app.charWidth,app.charHeight,fill=None,border='navy')
-    if app.battleState=='win':
+    if app.battleState==game_state.BATTLE_WIN:
         drawLabel('You Win!',app.width//2,app.height//2,font='sans',size=50,fill='red')
-    elif app.battleState=='lose':
+    elif app.battleState==game_state.BATTLE_LOSE:
         drawLabel('You Lose...',app.width//2,app.height//2,font='sans',size=50,fill='gray')
     app.endButton.drawButton()
     drawAp(app)

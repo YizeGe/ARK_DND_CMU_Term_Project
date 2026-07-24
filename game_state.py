@@ -1,0 +1,17 @@
+from cmu_graphics import *
+from enum import Enum
+
+class game_state(Enum):
+    TITLE_SCREEN=100
+    BATTLE_PREP=105
+    PLAYER_TURN=108
+    ENEMY_TURN=110
+    ANIMATION_PLAYING=115
+    BATTLE_WIN=666
+    BATTLE_LOSE=325
+
+    WAITING_FOR_TARGET=555
+    SELECTING_ACTION=333
+    SELECTING_TARGET=222
+    EXECUTING=120
+
