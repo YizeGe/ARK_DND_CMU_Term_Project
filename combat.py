@@ -84,8 +84,7 @@ def updateTurn(app,curr_unit):
     app.turn_index+=1
     if app.turn_index>=len(app.charActSeq):
         app.turn_index=0
-    curr_unit.ap=curr_unit.maxAp
-    curr_unit.act=curr_unit.maxAct
+    curr_unit.startTurn()
 
 #检查行动列表中是否有死人并剔除
 def checkDied(app):
@@ -121,7 +120,6 @@ def tryAttackUnit(app,attacker,target):
     if attacker.act<=0:
         return
     app.selected_target=target
-    attacker.act-=1
     attacker.updateMotion('attack')
     setAttackFacing(attacker,target)
 
@@ -131,13 +129,16 @@ def resolveAttack(app,attacker):
     if app.selected_target.isDied():
         return
     skill=attacker.skills[0]
-    if skill.isHit(app.selected_target.ac):
-        damage=skill.calDamage(attacker)
-        app.selected_target.hp-=damage
-        if app.selected_target.isDied():
-            print(f'{app.selected_target.name} is died!')
+    if skill.consumeResources(attacker):
+        if skill.isHit(app.selected_target.ac):
+            damage=skill.calDamage(attacker)
+            app.selected_target.hp-=damage
+            if app.selected_target.isDied():
+                print(f'{app.selected_target.name} is died!')
+        else:
+            print('miss!')
     else:
-        print('miss!')
+        print('资源不足')
     app.selected_target=None
 
 

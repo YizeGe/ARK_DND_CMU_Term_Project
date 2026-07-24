@@ -20,8 +20,6 @@ class Unit:
         self.hp=level*constitution
         self.maxAp=10*dexterity
         self.ap=10*dexterity
-        self.maxAct=act
-        self.act=act
         self.ac=dexterity
         self.level=level
         self.strength=strength
@@ -39,6 +37,20 @@ class Unit:
         self.skills=skills
         self.facing='right'
         self.initial=None
+
+        #法术相关变量
+        self.maxAct=act
+        self.act=act
+        self.trick_max=0
+        self.trick=self.trick_max
+        self.MaxRing1=0
+        self.ring1=self.MaxRing1
+        self.MaxRing2=0
+        self.ring2=self.MaxRing2
+        self.bonus_used=False
+        self.reaction_used=False
+
+        self.buff=[]
 
     #检查角色是否被点击
     def clickOnCharacter(self,mouseX,mouseY):
@@ -113,3 +125,11 @@ class Unit:
     def rollInit(self):
         initNum=random.randint(1,20)+self.calculateBonus(self.dexterity)
         return initNum
+
+    def startTurn(self):
+        self.act=self.maxAct
+        self.ring1=self.MaxRing1
+        self.ring2=self.MaxRing2
+        self.bonus_used=False
+        self.reaction_used=False
+        self.ap=self.maxAp

@@ -15,7 +15,11 @@ ALL_SKILL_DATA={
         'fixed_damage':6,
         'hit_bonus':2,
         'is_ranged':False,
-        'range':200
+        'range':200,
+        'cost_action':True,
+        'cost_bonus':False,
+        'cost_reaction':False,
+        'cost_ring_slot':0
     }
 }
 
@@ -30,7 +34,11 @@ def createSkillFromData(skillName,button):
     hit_bonus=skillData['hit_bonus']
     is_ranged=skillData['is_ranged']
     range=skillData['range']
-    return Skill(name,button,effect,dice_count,dice_sides,fixed_damage,hit_bonus,is_ranged,range)
+    cost_action=skillData['cost_action']
+    cost_bonus=skillData['cost_bonus']
+    cost_reaction=skillData['cost_reaction']
+    cost_ring_slot=skillData['cost_ring_slot']
+    return Skill(name,button,effect,dice_count,dice_sides,fixed_damage,hit_bonus,is_ranged,range,cost_action,cost_bonus,cost_reaction,cost_ring_slot)
 
 
 
@@ -145,7 +153,9 @@ def createHero(app,heroName):
     animation = heroData['animation']
     skills=getSkillsList(skill_names)
     actions=load_char_actions(app,animation)
-    return Unit(app,name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, actions, skills)
+    hero=Unit(app,name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, actions, skills)
+    hero.startTurn()
+    return hero
 
 
 def createEnemy(app,enemyName,name,x,y):
@@ -165,7 +175,9 @@ def createEnemy(app,enemyName,name,x,y):
     animation = enemyData['animation']
     actions=load_char_actions(app,animation)
     skills=getSkillsList(skill_names)
-    return Unit(app,name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, actions, skills)
+    enemy=Unit(app,name, team, occupation, x, y, atk_range, act, level,strength, dexterity, intelligence, perception,constitution, charisma, actions, skills)
+    enemy.startTurn()
+    return enemy
 
 def getSkillsList(skill_names):
     skills=[]
