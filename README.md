@@ -14,6 +14,7 @@ Todo:
 3.add more characters and verify multiple character fighting logic
 
 3.1.Improve skill logic, add more skills and specify
+Fix resources wrongly minus bug
 
 4.enhance game performance
 
